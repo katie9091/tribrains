@@ -31,7 +31,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(Color.parseColor("#121212"));
-        root.setPadding(16, 48, 16, 16);
+        root.setPadding(16, 24, 16, 8);
 
         TextView title = new TextView(this);
         title.setText("TriBrains — 3 AI Brains");
@@ -52,7 +52,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         root.addView(brainTabs);
 
         brainContent = new LinearLayout(this); brainContent.setOrientation(LinearLayout.VERTICAL);
-        LinearLayout.LayoutParams bclp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 140); brainContent.setLayoutParams(bclp);
+        LinearLayout.LayoutParams bclp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 90); brainContent.setLayoutParams(bclp);
         brainContent.setBackgroundColor(Color.parseColor("#1e1e2e")); brainContent.setPadding(12,8,12,8);
         TextView brainTitle = new TextView(this); brainTitle.setText(brainNames[0]); brainTitle.setTextColor(Color.parseColor(brainColors[0])); brainTitle.setTextSize(16); brainTitle.setTypeface(null, android.graphics.Typeface.BOLD);
         TextView brainDesc = new TextView(this); brainDesc.setText("Skills: " + brainSkills[0] + "\nStatus: Active · Listening\nSandbox: Linux sandbox available"); brainDesc.setTextColor(Color.parseColor("#e0e0e0")); brainDesc.setTextSize(11);
@@ -62,7 +62,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         // Chat area inside ScrollView
         ScrollView scroll = new ScrollView(this); scroll.setBackgroundColor(Color.parseColor("#181825"));
-        LinearLayout.LayoutParams scrollLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f); scroll.setLayoutParams(scrollLp);
+        LinearLayout.LayoutParams scrollLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1.2f); scroll.setLayoutParams(scrollLp);
         chatBody = new LinearLayout(this); chatBody.setOrientation(LinearLayout.VERTICAL); chatBody.setPadding(8,8,8,8);
         scroll.addView(chatBody); root.addView(scroll);
 

@@ -24,6 +24,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     String[] brainSkills = {"Python + Linux + File Analysis", "GGUF + Sandbox + Unzip", "Minecraft + Mcaddon + Fix"};
     List<String> messages = new ArrayList<>();
     List<String> importedFiles = new ArrayList<>();
+    String[] brainGGUF = {"(none)", "(none)", "(none)"}; // Alpha=Llama, Beta=Qwen, Gamma=Openrouter
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         LinearLayout.LayoutParams bclp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 90); brainContent.setLayoutParams(bclp);
         brainContent.setBackgroundColor(Color.parseColor("#1e1e2e")); brainContent.setPadding(12,8,12,8);
         TextView brainTitle = new TextView(this); brainTitle.setText(brainNames[0]); brainTitle.setTextColor(Color.parseColor(brainColors[0])); brainTitle.setTextSize(16); brainTitle.setTypeface(null, android.graphics.Typeface.BOLD);
-        TextView brainDesc = new TextView(this); brainDesc.setText("Skills: " + brainSkills[0] + "\nStatus: Active · Listening\nSandbox: Linux sandbox available"); brainDesc.setTextColor(Color.parseColor("#e0e0e0")); brainDesc.setTextSize(11);
+        TextView brainDesc = new TextView(this); brainDesc.setText("Skills: " + brainSkills[0] + "\nGGUF: " + brainGGUF[0] + "\nStatus: Active · Listening\nSandbox: Linux sandbox available"); brainDesc.setTextColor(Color.parseColor("#e0e0e0")); brainDesc.setTextSize(11);
         brainContent.addView(brainTitle); brainContent.addView(brainDesc); root.addView(brainContent);
 
         TextView collab = new TextView(this); collab.setText("Brains collaborate: Alpha → Beta → Gamma share context. All have full Python + Linux + no skill restrictions."); collab.setTextColor(Color.parseColor("#ffd700")); collab.setTextSize(10); collab.setPadding(0,4,0,4); root.addView(collab);
@@ -111,10 +112,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
             TextView brainTitle = (TextView) brainContent.getChildAt(0);
             TextView brainDesc = (TextView) brainContent.getChildAt(1);
             brainTitle.setText(brainNames[idx]); brainTitle.setTextColor(Color.parseColor(brainColors[idx]));
-            brainDesc.setText("Skills: " + brainSkills[idx] + "\nStatus: Active · Listening\nSandbox: Linux sandbox available\nNo skills restrictions.");
+            brainDesc.setText("Skills: " + brainSkills[idx] + "\nGGUF: " + brainGGUF[idx] + "\nStatus: Active · Listening\nSandbox: Linux sandbox available\nNo skills restrictions.");
             addChatLine("[System] Switched to " + brainNames[idx] + ". All 3 brains share this conversation."); return;
         }
-        if (v == importBtn) { showImportOptions(); return; }
+        if (v == importBtn) { openFilePicker(); return; }
         Button btn = (Button) v;
         String txt = btn.getText().toString();
         if (txt.contains("Sandbox")) { addChatLine("[Sandbox] Linux sandbox active. Commands: python3, unzip, ls, cat, find, grep. No restrictions."); startActivity(new Intent(this, SandboxActivity.class)); }
@@ -129,6 +130,25 @@ public class MainActivity extends Activity implements View.OnClickListener {
             if (s.contains("GGUF")) addChatLine("[Beta] GGUF workspace: /work/gguf/src/ (model_arch, train, export_gguf)");
             addChatLine("[System] Queued. Sandbox: unzip / python3 inspect.");
         }}); b.show();
+    }
+    void openFilePicker() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT); intent.addCategory(Intent.CATEGORY_OPENABLE); intent.setType("*/*");
+        startActivityForResult(intent, 101);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 101 && resultCode == RESULT_OK && data != null) {
+            android.net.Uri uri = data.getData();
+            String name = uri != null ? uri.getLastPathSegment() : "file";
+            addChatLine("[Import] File chosen: " + name);
+            // Assign to current brain as its GGUF / model
+            brainGGUF[currentBrain] = name;
+            addChatLine("[System] Assigned to " + brainNames[currentBrain] + ". Model slot filled.");
+            addChatLine("[Alpha/Local] Llama slot: " + brainGGUF[0]);
+            addChatLine("[Beta] Qwen slot: " + brainGGUF[1]);
+            addChatLine("[Gamma] Openrouter/custom slot: " + brainGGUF[2]);
+        }
     }
     void showSandboxPanel() {
         AlertDialog.Builder b = new AlertDialog.Builder(this); b.setTitle("Sandbox / Linux Brain");

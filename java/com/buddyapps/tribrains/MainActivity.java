@@ -117,8 +117,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (v == importBtn) { showImportOptions(); return; }
         Button btn = (Button) v;
         String txt = btn.getText().toString();
-        if (txt.contains("Sandbox")) { addChatLine("[Sandbox] Linux sandbox active. Commands: python3, unzip, ls, cat, find, grep. No restrictions."); showSandboxPanel(); }
-        else if (txt.contains("GGUF")) { showGGUFPanel(); }
+        if (txt.contains("Sandbox")) { addChatLine("[Sandbox] Linux sandbox active. Commands: python3, unzip, ls, cat, find, grep. No restrictions."); startActivity(new Intent(this, SandboxActivity.class)); }
+        else if (txt.contains("GGUF")) { startActivity(new Intent(this, GGUFActivity.class)); }
     }
 
     void showImportOptions() {
@@ -126,6 +126,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         b.setTitle("Import File"); String[] items = {"GGUF Model (.gguf)", "ZIP / Mcaddon File", "Python Script (.py)", "Any File (text / binary)"};
         b.setItems(items, new DialogInterface.OnClickListener() { public void onClick(DialogInterface d, int which) {
             String s = items[which]; addChatLine("[Import] " + s); addChatLine("[Beta] Unzip/inspect. Sandbox active."); addChatLine("[Gamma] Checking Minecraft if mcaddon."); importedFiles.add("imported_" + which + "." + (s.contains("GGUF")?"gguf":s.contains("ZIP")?"zip":"py"));
+            if (s.contains("GGUF")) addChatLine("[Beta] GGUF workspace: /work/gguf/src/ (model_arch, train, export_gguf)");
             addChatLine("[System] Queued. Sandbox: unzip / python3 inspect.");
         }}); b.show();
     }

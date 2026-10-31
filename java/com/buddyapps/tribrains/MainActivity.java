@@ -32,7 +32,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(Color.parseColor("#121212"));
-        root.setPadding(16, 24, 16, 8);
+        root.setPadding(16, 24, 16, 6);
 
         TextView title = new TextView(this);
         title.setText("TriBrains — 3 AI Brains");
@@ -53,10 +53,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         root.addView(brainTabs);
 
         brainContent = new LinearLayout(this); brainContent.setOrientation(LinearLayout.VERTICAL);
-        LinearLayout.LayoutParams bclp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 90); brainContent.setLayoutParams(bclp);
+        LinearLayout.LayoutParams bclp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 100); brainContent.setLayoutParams(bclp);
         brainContent.setBackgroundColor(Color.parseColor("#1e1e2e")); brainContent.setPadding(12,8,12,8);
         TextView brainTitle = new TextView(this); brainTitle.setText(brainNames[0]); brainTitle.setTextColor(Color.parseColor(brainColors[0])); brainTitle.setTextSize(16); brainTitle.setTypeface(null, android.graphics.Typeface.BOLD);
-        TextView brainDesc = new TextView(this); brainDesc.setText("Skills: " + brainSkills[0] + "\nGGUF: " + brainGGUF[0] + "\nStatus: Active · Listening\nSandbox: Linux sandbox available"); brainDesc.setTextColor(Color.parseColor("#e0e0e0")); brainDesc.setTextSize(11);
+        TextView brainDesc = new TextView(this); brainDesc.setText("Skills: " + brainSkills[0] + "\nGGUF: " + brainGGUF[0] + "\nStatus: Active · Listening\nSandbox: Linux sandbox available"); brainDesc.setTextColor(Color.parseColor("#e0e0e0")); brainDesc.setTextSize(10);
         brainContent.addView(brainTitle); brainContent.addView(brainDesc); root.addView(brainContent);
 
         TextView collab = new TextView(this); collab.setText("Brains collaborate: Alpha → Beta → Gamma share context. All have full Python + Linux + no skill restrictions."); collab.setTextColor(Color.parseColor("#ffd700")); collab.setTextSize(10); collab.setPadding(0,4,0,4); root.addView(collab);
@@ -77,6 +77,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Button sandboxBtn = new Button(this); sandboxBtn.setText("Open Sandbox"); sandboxBtn.setOnClickListener(this); LinearLayout.LayoutParams sbLp = new LinearLayout.LayoutParams(0,LinearLayout.LayoutParams.WRAP_CONTENT,1f); sandboxBtn.setLayoutParams(sbLp); actions.addView(sandboxBtn);
         Button ggufBtn = new Button(this); ggufBtn.setText("GGUF Manager"); ggufBtn.setOnClickListener(this); LinearLayout.LayoutParams ggLp = new LinearLayout.LayoutParams(0,LinearLayout.LayoutParams.WRAP_CONTENT,1f); ggufBtn.setLayoutParams(ggLp); actions.addView(ggufBtn);
         root.addView(actions);
+        // Margin spacer between actions and input to prevent overlap
+        TextView spacer = new TextView(this); spacer.setText(" "); LinearLayout.LayoutParams sp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 8); spacer.setLayoutParams(sp); root.addView(spacer);
 
         // Input row
         LinearLayout inputRow = new LinearLayout(this); inputRow.setOrientation(LinearLayout.HORIZONTAL); inputRow.setWeightSum(4);
@@ -142,12 +144,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
             android.net.Uri uri = data.getData();
             String name = uri != null ? uri.getLastPathSegment() : "file";
             addChatLine("[Import] File chosen: " + name);
-            // Assign to current brain as its GGUF / model
-            brainGGUF[currentBrain] = name;
-            addChatLine("[System] Assigned to " + brainNames[currentBrain] + ". Model slot filled.");
-            addChatLine("[Alpha/Local] Llama slot: " + brainGGUF[0]);
-            addChatLine("[Beta] Qwen slot: " + brainGGUF[1]);
-            addChatLine("[Gamma] Openrouter/custom slot: " + brainGGUF[2]);
+            // Ask which slot before assigning
+            final String fileName = name;
+            AlertDialog.Builder ask = new AlertDialog.Builder(this); ask.setTitle("Assign GGUF to which brain?");
+            String[] slots = {"Alpha (Llama)", "Beta (Qwen)", "Gamma (Openrouter custom)"};
+            ask.setItems(slots, new DialogInterface.OnClickListener() { public void onClick(DialogInterface d, int which) {
+                brainGGUF[which] = fileName;
+                addChatLine("[Import] " + fileName + " → " + slots[which]);
+                addChatLine("[Alpha/Llama] " + brainGGUF[0]);
+                addChatLine("[Beta/Qwen] " + brainGGUF[1]);
+                addChatLine("[Gamma/Openrouter] " + brainGGUF[2]);
+            }}); ask.show();
         }
     }
     void showSandboxPanel() {

@@ -32,7 +32,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(Color.parseColor("#121212"));
-        root.setPadding(16, 24, 16, 6);
+        root.setPadding(16, 24, 16, 100);
 
         TextView title = new TextView(this);
         title.setText("TriBrains — 3 AI Brains");
